@@ -340,6 +340,10 @@ function cancel_crop()
     mp.unregister_idle(draw_crop_zone)
     mp.set_osd_ass(1280, 720, '')
     active = false
+    if uosc_available and uosc_off then
+        mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), '')
+        uosc_off = false
+    end
 end
 
 function start_crop(mode)
@@ -360,6 +364,10 @@ function start_crop(mode)
     active = true
     active_mode = mode_maybe
 
+    if uosc_available then
+        mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), 'timeline,controls,volume,top_bar')
+        uosc_off = true
+    end
     if opts.mouse_support then
         crop_cursor.x, crop_cursor.y = mp.get_mouse_pos()
     end
@@ -402,6 +410,11 @@ function toggle_crop(mode)
         start_crop(mode)
     end
 end
+
+-- check if uosc is available
+mp.register_script_message('uosc-version', function(version)
+    uosc_available = true
+end)
 
 -- bindings
 if opts.mouse_support then
