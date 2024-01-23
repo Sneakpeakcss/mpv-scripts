@@ -4,8 +4,8 @@ local opts = {
     shade_opacity = "44",
     light_opacity = "CC",
     draw_frame = false,
-    frame_border_width = 2,
-    frame_border_color = "EEEEEE",
+    frame_border_width = 1,
+    frame_border_color = "FF0000",
     draw_crosshair = true,
     draw_text = true,
     mouse_support = true,
@@ -23,6 +23,9 @@ local opts = {
     cancel = "ESC",
 }
 (require 'mp.options').read_options(opts)
+
+-- Convert RRGGBB to BBGGRR for user convenience
+local frame_border_color = opts.frame_border_color:gsub("(%x%x)(%x%x)(%x%x)","%3%2%1")
 
 function split(input)
     local ret = {}
@@ -156,7 +159,7 @@ function draw_frame(ass, frame)
     ass:append("{\\an7}")
     ass:append("{\\bord0}")
     ass:append("{\\shad0}")
-    ass:append("{\\c&H" .. opts.frame_border_color .. "&}")
+    ass:append("{\\c&H" .. frame_border_color .. "&}")
     ass:append("{\\1a&H00&}")
     ass:append("{\\2a&HFF&}")
     ass:append("{\\3a&HFF&}")
