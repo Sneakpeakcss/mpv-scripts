@@ -162,6 +162,11 @@ function draw_frame(ass, frame)
     ass:rect_cw(c2.x, c1.y, c2.x + b, c2.y + b)
     ass:rect_cw(c1.x - b, c2.y, c2.x, c2.y + b)
     ass:rect_cw(c1.x - b, c1.y - b, c1.x, c2.y)
+    local xm = (c1.x + c2.x) / 2
+    local ym = (c1.y + c2.y) / 2
+    local bh = b / 2
+    ass:rect_cw(c1.x, ym - b, c2.x + b, ym + bh)
+    ass:rect_cw(xm - bh, c1.y, xm + bh, c2.y)
     ass:draw_stop()
 end
 
