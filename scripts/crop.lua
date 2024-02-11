@@ -313,7 +313,7 @@ function crop_video(x1, y1, x2, y2)
             local w = x2 - x1
             local h = y2 - y1
     
-            table.insert(recursive_crop, {x = x1, y = y1, w = w, h = h})
+            table.insert(recursive_crop, {x = x1, y = y1, w = w, h = h, rotation = mp.get_property_number("video-rotate")})
             apply_video_crop()
             table.insert(remove_last_filter, "hard")
 
@@ -406,6 +406,18 @@ end
 function apply_video_crop()
     local x, y, w, h = adjust_coordinates()
 
+    -- manage video-rotate
+    local rotation = mp.get_property_number("video-rotate")
+    if active_mode == "hard" and recursive_crop[#recursive_crop].rotation ~= 0 then
+        if rotation == 90 then
+            x, y, w, h = y, 1 - (x + w), h, w
+        elseif rotation == 180 then
+            x, y = 1 - (x + w), 1 - (y + h)
+        elseif rotation == 270 then
+            x, y, w, h = 1 - (y + h), x, h, w
+        end
+    end
+
     local vop = mp.get_property_native("video-out-params")
     local x = math.floor(x * vop.w + 0.5)
     local y = math.floor(y * vop.h + 0.5)
@@ -437,9 +449,10 @@ end
 function remove_video_crop(filter_number)
     if #recursive_crop > 0 then
         table.remove(recursive_crop)
+        if #recursive_crop > 0 then
         -- reapply each crop in the table
         apply_video_crop()
-        if #recursive_crop == 0 then
+        else
             mp.set_property_native("video-crop", "")
         end
         mp.osd_message("Removed: #" .. tostring(filter_number or #recursive_crop + 1) .. " " .. "video-crop")
