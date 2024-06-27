@@ -9,6 +9,7 @@ local opts = {
     draw_crosshair = true,
     draw_text = true,
     mouse_support = true,
+    disable_window_dragging = true,
     coarse_movement = 30,
     left_coarse = "LEFT",
     right_coarse = "RIGHT",
@@ -389,6 +390,9 @@ function cancel_crop()
         mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), '')
         uosc_off = false
     end
+    if opts.disable_window_dragging and not mp.get_property_bool("window-dragging") then 
+        mp.set_property_bool("window-dragging", true) 
+    end
 end
 
 -- adjust coordinates based on previous values
@@ -552,6 +556,9 @@ function start_crop(mode)
     active = true
     active_mode = mode_maybe
 
+    if opts.disable_window_dragging then
+        mp.set_property_bool("window-dragging", false)
+    end
     if uosc_available then
         mp.commandv('script-message-to', 'uosc', 'disable-elements', mp.get_script_name(), 'timeline,controls,volume,top_bar')
         uosc_off = true
