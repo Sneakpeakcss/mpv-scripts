@@ -391,7 +391,8 @@ function cancel_crop()
         uosc_off = false
     end
     if opts.disable_window_dragging and not mp.get_property_bool("window-dragging") then 
-        mp.set_property_bool("window-dragging", true) 
+        mp.set_property_bool("window-dragging", true)
+        mp.set_property("input-doubleclick-time", og_dblc)
     end
 end
 
@@ -454,8 +455,8 @@ function remove_video_crop(filter_number)
     if #recursive_crop > 0 then
         table.remove(recursive_crop)
         if #recursive_crop > 0 then
-        -- reapply each crop in the table
-        apply_video_crop()
+            -- reapply each crop in the table
+            apply_video_crop()
         else
             mp.set_property_native("video-crop", "")
         end
@@ -557,6 +558,8 @@ function start_crop(mode)
     active_mode = mode_maybe
 
     if opts.disable_window_dragging then
+        og_dblc = mp.get_property("input-doubleclick-time")
+        mp.set_property("input-doubleclick-time", "0")
         mp.set_property_bool("window-dragging", false)
     end
     if uosc_available then
